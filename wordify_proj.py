@@ -1,7 +1,7 @@
 '''
  wordify_proj.py
 
- Revision : V1.0
+ Revision : V2.0
 
  Last Modified Date    Author
 
@@ -11,6 +11,7 @@
 # Libraries used in the program
 from nltk.corpus import words as words
 import re
+import os
 
 # Maps the alphabets to corresponding numbers as per the keypad
 keypad = [
@@ -130,6 +131,7 @@ Return: all_num_words - all dictionary words in numbers
 def dictionary_to_nums():
   all_num_words = []
   all_words = []
+  os.system('cls')
   print('\n\nLoading Dictionary...')
 
   for a_word in words.words():
@@ -140,6 +142,7 @@ def dictionary_to_nums():
     all_num_words.append(phone)
     all_words.append(word)
 
+  os.system('cls')
   return all_num_words, all_words
 
 # Saves time by saving converted dictionary as a list
@@ -154,6 +157,7 @@ Return: out - string with numbers and alphabets
 def number_to_words(number_to_convert):
 
   no_dash = remove_dash(number_to_convert)
+  out = []
 
   if True == no_dash.isdigit():
 
@@ -170,8 +174,11 @@ def number_to_words(number_to_convert):
       else:
         pass
 
-    output = add_dash(number_to_convert, out)
-    return output.upper()
+    if not out:
+      return -2
+    else:
+      output = add_dash(number_to_convert, out)
+      return output.upper()
   else:
     return -1
 
@@ -197,7 +204,10 @@ def all_wordifications(main_number):
     for idx in range(len(all_possible)):
       output.append(add_dash(main_number, all_possible[idx].upper()))
 
-    return output
+    if not output:
+      return -2
+    else:
+      return output
 
   else:
      return -1
@@ -208,61 +218,66 @@ Brief Desc.: Acts as the main module of the program by communicating with
              user about the task performed, corresponding input-output
              operations and function calls
 Param[in]: NA
-Return: Prints Output or Exits (returns)
+Return: Prints Output and keeps iterating until user exits (returns)
 '''
 def user_interface():
 
-  option = input("\n Select the task to be performed (1-4):\n\
+  while True:
+
+    option = input("\n Select the task to be performed(1-4):\n\
           1. Convert a number to wordified form \n\
           2. Convert a wordified form to corresponding number \n\
           3. Get all the possible wordified forms of a phone number\n\
           4. Quit \n")
 
-  if '1' == option:
+    if '1' == option:
 
-    to_convert = input('\nEnter the number to be converted to words : ')
+      to_convert = input('\nEnter the number to be converted to words : ')
 
-    output = number_to_words(to_convert)
+      output = number_to_words(to_convert)
 
-    if -1 == output:
-      print('\nInvalid Entry!')
+      if -1 == output:
+        print('\nInvalid Entry!')
+      elif -2 == output:
+        print('\nNo words found in this number')
+      else:
+        print('\nThe Resulting number is : ')
+        print(output)
 
-    else:
-      print('\nThe Resulting number is : ')
-      print(output)
+    elif '2' == option:
 
+      to_convert = input('\nEnter the num-word to be converted to number : ')
+      output = words_to_number(to_convert)
 
-  elif '2' == option:
+      if -1 == output:
+        print('\nInvalid Entry!')
 
-    to_convert = input('\nEnter the num-word to be converted to number : ')
-    output = words_to_number(to_convert)
+      else:
+        print('\nThe Resulting number is : ')
+        print(output)
 
-    if -1 == output:
-      print('\nInvalid Entry!')
+    elif '3' == option:
 
-    else:
-      print('\nThe Resulting number is : ')
-      print(output)
-
-  elif option == '3':
-
-    to_convert=input('\n Enter the number to be converted into all possible \
+      to_convert=input('\nEnter the number to be converted into all possible \
 word forms possible : ')
-    output = all_wordifications(to_convert)
+      output = all_wordifications(to_convert)
 
-    if -1 == output:
-      print('\nInvalid Entry!')
+      if -1 == output:
+        print('\nInvalid Entry!')
+      elif -2 == output:
+        print('\nNo words found for this number')
+      else:
+        print('\nYour Options : ')
+        print("\n".join(output))
+
+    elif '4' == option:
+      print('\nSee ya later')
+      break
 
     else:
-      print('\nYour Options : ')
-      print("\n".join(output))
+      print('\nInvalid Choice')
 
-  elif '4' == option:
-    print('\nSee ya later')
-    return
-
-  else:
-    print('\nInvalid Choice')
+  return
 
 if __name__ == '__main__':
     user_interface()
